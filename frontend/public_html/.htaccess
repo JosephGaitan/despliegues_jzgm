@@ -1,0 +1,21 @@
+# Activar el motor de reescritura
+RewriteEngine On
+
+# 1. SEGURIDAD: Impedir que se listen los directorios si no hay index
+Options -Indexes
+
+# 2. REDIRECCIÓN DE DOMINIO (Alias -> Principal)
+# Si el usuario entra usando el dominio "mooo.com" 
+RewriteCond %{HTTP_HOST} mooo\.com$ [NC]
+# Lo redirigimos permanentemente (R=301) a su dominio principal
+
+RewriteRule ^(.*)$ http://cine-joseph-daw.chickenkiller.com/$1 [R=301,L]
+
+# 3. PÁGINA DE ERROR 404 PERSONALIZADA
+# Si no encuentra el archivo, muestra esta página
+ErrorDocument 404 /pages/404.html
+
+# --- ZONA DE MANTENIMIENTO ---
+# Para activar el mantenimiento, DESCOMENTA las dos líneas siguientes 
+# RewriteCond %{REQUEST_URI} !^/maintenance [NC]
+# RewriteRule ^(.*)$ http://web-mantenimiento-daw-env

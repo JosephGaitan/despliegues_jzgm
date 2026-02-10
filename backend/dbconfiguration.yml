@@ -1,0 +1,4 @@
+ip: "db"             # Nombre del servicio en docker-compose (actúa como host)
+dbname: "films"
+user: "usuario_cine"
+pass: "usuario_password"

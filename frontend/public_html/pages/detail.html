@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <base href="/frontend/public_html/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Creo este archivo ya que voy a necesitar cargar estilos y librerías en todas las páginas -->
+
+    <!-- Boostrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+
+    <!-- Estilos globales -->
+    <link rel="stylesheet" type="text/css" href="/css/global.css"/>
+
+    <!-- Cargo los estilos de la página de login -->
+    <link rel="stylesheet" type="text/css" href="/css/detail.css"/>
+
+    <!-- Cargo el Script Javascript que gestiona la vista -->
+    <script type = "text/javascript" src = "/config/urls.js"></script>	
+    <script type = "text/javascript" src = "/pages/js/detail.js"></script>		
+
+    <title>Detalle de la película</title>
+</head>
+<body>
+
+<div class="detail-container">
+    <div class="card card-detail" style="width: 18rem;">
+        <img id="img" src="" class="card-img-top" alt="" referrerpolicy="no-referrer" >
+        <div class="card-body">
+            <h5 id="name" class="card-title"></h5>
+            <p id="plot" class="card-text"></p>
+        </div>
+        <ul class="list-group list-group-flush">
+            <li id="director" class="list-group-item"></li>
+            <li id="classification" class="list-group-item"></li>
+        </ul>
+    </div>
+</div>
+
+</body>
+</html> 

@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  # Base de Datos (Producción: Vacía inicialmente)
+  db:
+    image: mysql:8.0.35-debian
+    container_name: db-films-prod
+    restart: always
+    # En prod, usamos variables de entorno que vendran del archivo .env
+    env_file:
+      - .env
+    volumes:
+      # SOLO volumen de datos para persistencia, SIN el dump inicial
+      - db_data_prod:/var/lib/mysql
+    networks:
+      - films-network-prod
+
+  # Backend
+  backend:
+    build: ./backend
+    container_name: backend-films-prod
+    restart: always
+    ports:
+      - "8080:80" 
+    volumes:
+      - ./backend:/var/www/html/backend
+      - ./virtualhosts/backend.prod.conf:/etc/apache2/sites-enabled/000-default.conf
+      # Inyectamos configuración de BD para producción
+      - ./dbconfiguration.prod.yml:/var/www/html/backend/dbconfiguration.yml
+    depends_on:
+      - db
+    networks:
+      - films-network-prod
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    container_name: frontend-films-prod
+    restart: always
+    ports:
+      - "80:80" # El frontend toma el control del puerto principal HTTP
+    volumes:
+      - ./frontend:/var/www/html/frontend
+      - ./virtualhosts/frontend.prod.conf:/etc/apache2/sites-enabled/000-default.conf
+      # Inyectamos urls.js de producción
+      - ./urls.prod.js:/var/www/html/frontend/public_html/config/urls.js
+    networks:
+      - films-network-prod
+
+networks:
+  films-network-prod:
+    driver: bridge
+
+volumes:
+  db_data_prod:

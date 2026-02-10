@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # Servicio de Base de Datos MySQL
+  db:
+    image: mysql:8.0.35-debian
+    container_name: db-films-dev 
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword  # Contraseña para ROOT
+      MYSQL_DATABASE: films              # Base de datos inicial 
+      MYSQL_USER: usuario_cine           # Usuario adicional
+      MYSQL_PASSWORD: usuario_password   # Contraseña usuario adicional
+    volumes:
+      # Cargamos el dump inicial automáticamente
+      - ./database/films_dump.sql:/docker-entrypoint-initdb.d/init.sql
+      # Persistencia de datos (opcional en dev, pero recomendada)
+      - db_data:/var/lib/mysql
+    networks:
+      - films-network
+
+  # Servicio Backend (Apache + PHP)
+  backend:
+    build: ./backend              # Construye usando su Dockerfile 
+    container_name: backend-films-dev # Nombre personalizado 
+    ports:
+      - "8080:80"                 # Mapeo puerto 8080 host -> 80 contenedor 
+    volumes:
+      # Compartimos el código fuente para editar en vivo 
+      - ./backend:/var/www/html/backend
+      # Compartimos la configuración del VirtualHost 
+      - ./virtualhosts/backend.dev.conf:/etc/apache2/sites-enabled/000-default.conf
+    depends_on:
+      - db                        # Espera a que la BD inicie 
+    networks:
+      - films-network
+
+# Servicio Frontend (Apache)
+  frontend:
+    build: ./frontend
+    container_name: frontend-films-dev
+    ports:
+      - "8000:80"          # Aquí tuve que usar otro puerto porque el 80 ya está ocupado con cosas del curro ahora mismo.
+    volumes:
+      - ./frontend:/var/www/html/frontend
+      - ./virtualhosts/frontend.dev.conf:/etc/apache2/sites-enabled/000-default.conf
+      - ./urls.js:/var/www/html/frontend/public_html/config/urls.js
+    networks:
+      - films-network
+
+# Definición de red y volúmenes
+networks:
+  films-network:
+    driver: bridge
+
+volumes:
+  db_data:

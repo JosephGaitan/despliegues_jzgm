@@ -1,0 +1,4 @@
+ip: "db"             # Nombre del servicio en docker-compose
+dbname: "films"
+user: "prod_user"    # Debe coincidir con MYSQL_USER del .env
+pass: "prod_password" # Debe coincidir con MYSQL_PASSWORD del .env
