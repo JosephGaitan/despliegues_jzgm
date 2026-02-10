@@ -1,4 +1,4 @@
-# Variable definitions (to avoid hardcoding keys here)
+# Definición de variables (para no poner claves aquí directamente)
 variable "aws_access_key" {}
 variable "aws_secret_key" {}
 variable "region" {
@@ -11,12 +11,12 @@ provider "aws" {
   secret_key = var.aws_secret_key
 }
 
-# 1. Security Group (Firewall)
+# 1. Grupo de Seguridad (Firewall)
 resource "aws_security_group" "web_sg" {
   name        = "films_security_group"
-  description = "Allow HTTP, Backend and SSH"
+  description = "Permitir HTTP, Backend y SSH"
 
-  # Port 80 (Frontend)
+  # Puerto 80 (Frontend)
   ingress {
     from_port   = 80
     to_port     = 80
@@ -24,7 +24,7 @@ resource "aws_security_group" "web_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Port 8080 (Backend)
+  # Puerto 8080 (Backend)
   ingress {
     from_port   = 8080
     to_port     = 8080
@@ -32,7 +32,16 @@ resource "aws_security_group" "web_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Port 22 (SSH)
+  # Port 3306 (MySQL - External Access for Render)
+  ingress {
+    from_port   = 3306
+    to_port     = 3306
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+
+  # Puerto 22 (SSH)
   ingress {
     from_port   = 22
     to_port     = 22
@@ -48,7 +57,7 @@ resource "aws_security_group" "web_sg" {
   }
 }
 
-# 2. Find Ubuntu 22.04 AMI
+# 2. Buscar imagen Ubuntu 22.04
 data "aws_ami" "ubuntu" {
   most_recent = true
   owners      = ["099720109477"] 
@@ -59,21 +68,15 @@ data "aws_ami" "ubuntu" {
   }
 }
 
-# 2.1 SSH Key Pair
-resource "aws_key_pair" "deployer" {
-  key_name   = "vps-key"
-  public_key = file("C:/Users/joseph/.ssh/id_ed25519.pub")
-}
-
-# 3. EC2 Instance
+# 3. Instancia EC2
 resource "aws_instance" "films_server" {
   ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"       # Using t3.micro for eu-north-1
-  key_name      = aws_key_pair.deployer.key_name
+  instance_type = "t3.micro"       # Usamos t3.micro para eu-north-1
+  key_name      = "vps-key"        
   
   vpc_security_group_ids = [aws_security_group.web_sg.id]
 
-  # Script to install Docker automatically
+  # Script para instalar Docker automáticamente
   user_data = <<-EOF
               #!/bin/bash
               apt-get update

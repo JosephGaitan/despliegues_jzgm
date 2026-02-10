@@ -16,6 +16,8 @@ services:
       - ./database/films_dump.sql:/docker-entrypoint-initdb.d/init.sql
       # Persistencia de datos (opcional en dev, pero recomendada)
       - db_data:/var/lib/mysql
+    ports:
+      - "3306:3306"              # Para que el host acceda a la BD desde fuera
     networks:
       - films-network
 
