@@ -1,4 +1,4 @@
 ip: "56.228.21.197"   
 dbname: "films"
-user: "root"        
-pass: "root_secreto_daw"
+user: "prod_user"        
+pass: "prod_password"
